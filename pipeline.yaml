@@ -22,10 +22,10 @@ Resources:
           {{resolve:secretsmanager:GITHUB_ACCESS:SecretString:GITHUB_ACCESS_TOKEN}}
       RegisterWithThirdParty: 'true'
       Filters:
-        - JsonPath: $.ref
-          MatchEquals: 'refs/heads/{GitHubBranch}'
-        - JsonPath: $.repository.name
-          MatchEquals: '{SchemaRepository}'
+        - JsonPath: '$.ref'
+          MatchEquals: 'refs/heads/{Branch}'
+        - JsonPath: '$.repository.name'
+          MatchEquals: '{Repo}'
       TargetPipeline: !Ref CodePipeline
       TargetAction: Source
       TargetPipelineVersion: !GetAtt 

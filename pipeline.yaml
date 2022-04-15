@@ -1,4 +1,17 @@
 AWSTemplateFormatVersion: 2010-09-09
+Description: Pipeline to build Schema Governance
+Parameters:
+  SchemaRepoOwner:
+    Type: String
+    AllowedPattern: "[A-Za-z0-9-]+"
+    Default: "vikasbajaj"
+  SchemaRepository:
+    Type: String
+    AllowedPattern: "[A-Za-z0-9-]+"
+  GitHubBranch:
+    Type: String
+    AllowedPattern: "[A-Za-z]+"
+    Default: "main"  
 Resources:
   CodeBuildProject:
     Type: 'AWS::CodeBuild::Project'
@@ -9,7 +22,7 @@ Resources:
         - Arn
       Source:
         Type: GITHUB
-        Location: https://github.com/vikasbajaj/schema-customer.git
+        Location: !Sub 'https://github.com/${SchemaRepoOwner}/${SchemaRepository}.git'
         BuildSpec: buildspec.yaml
         Auth:
           Type: OAUTH
@@ -20,9 +33,9 @@ Resources:
         Webhook: true
         FilterGroups:
           - - Type: EVENT
-              Pattern: PULL_REQUEST_CREATED, PULL_REQUEST_UPDATED
+              Pattern: 'PULL_REQUEST_CREATED, PULL_REQUEST_UPDATED, PULL_REQUEST_REOPENED'
             - Type: BASE_REF
-              Pattern: !Sub ^refs/heads/main$
+              Pattern: !Sub ^refs/heads/${GitHubBranch}$
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
